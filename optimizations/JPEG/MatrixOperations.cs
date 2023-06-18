@@ -4,7 +4,7 @@ using JPEG.Images;
 
 namespace JPEG
 {
-    class MatrixOperations
+    internal static class MatrixOperations
     {
         public static void ShiftMatrixValues(double[,] subMatrix, int shiftValue)
         {
@@ -97,7 +97,7 @@ namespace JPEG
             return result;
         }
 
-        public static int[,] GetQuantizationMatrix(int quality)
+        private static int[,] GetQuantizationMatrix(int quality)
         {
             if(quality < 1 || quality > 99)
                 throw new ArgumentException("quality must be in [1,99] interval");

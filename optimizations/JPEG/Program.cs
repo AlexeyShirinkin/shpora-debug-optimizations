@@ -7,52 +7,47 @@ using JPEG.Images;
 
 namespace JPEG
 {
-	class Program
+	internal static class Program
 	{
-		const int CompressionQuality = 70;
+		private const int CompressionQuality = 70;
+		private const string FileName = @"sample.bmp";
+		private static readonly string CompressedFileName = $"{FileName}.compressed.{CompressionQuality}";
+		private static readonly string UncompressedFileName = $"{FileName}.uncompressed.new.{CompressionQuality}.bmp";
 
-		static void Main(string[] args)
+		internal static void Main(string[] args)
 		{
 			var compressor = new Compressor();
 			var decompressor = new Decompressor();
 
-			try
+			Console.WriteLine(IntPtr.Size == 8 ? "64-bit version" : "32-bit version");
+
+			var stopwatch = Stopwatch.StartNew();
+			using (var fileStream = File.OpenRead(FileName))
+			using (var bitmap = (Bitmap)Image.FromStream(fileStream, false, false))
 			{
-				Console.WriteLine(IntPtr.Size == 8 ? "64-bit version" : "32-bit version");
-				var sw = Stopwatch.StartNew();
-				var fileName = @"sample.bmp";
-//				var fileName = "Big_Black_River_Railroad_Bridge.bmp";
-				var compressedFileName = fileName + ".compressed." + CompressionQuality;
-				var uncompressedFileName = fileName + ".uncompressed." + CompressionQuality + ".bmp";
-				
-				using (var fileStream = File.OpenRead(fileName))
-				using (var bmp = (Bitmap) Image.FromStream(fileStream, false, false))
-				{
-					var imageMatrix = (Matrix) bmp;
+				var imageMatrix = (Matrix)bitmap;
 
-					sw.Stop();
-					Console.WriteLine($"{bmp.Width}x{bmp.Height} - {fileStream.Length / (1024.0 * 1024):F2} MB");
-					sw.Start();
+				stopwatch.Stop();
+				Console.WriteLine($"{bitmap.Width}x{bitmap.Height} - {fileStream.Length / (1024.0 * 1024):F2} MB");
+				stopwatch.Start();
 
-					var compressionResult = compressor.Compress(imageMatrix, CompressionQuality);
-					compressionResult.Save(compressedFileName);
-				}
-
-				sw.Stop();
-				Console.WriteLine("Compression: " + sw.Elapsed);
-				sw.Restart();
-				var compressedImage = CompressedImage.Load(compressedFileName);
-				var uncompressedImage = decompressor.Decompress(compressedImage);
-				var resultBmp = (Bitmap) uncompressedImage;
-				resultBmp.Save(uncompressedFileName, ImageFormat.Bmp);
-				Console.WriteLine("Decompression: " + sw.Elapsed);
-				Console.WriteLine($"Peak commit size: {MemoryMeter.PeakPrivateBytes() / (1024.0*1024):F2} MB");
-				Console.WriteLine($"Peak working set: {MemoryMeter.PeakWorkingSet() / (1024.0*1024):F2} MB");
+				var compressionResult = compressor.Compress(imageMatrix, CompressionQuality);
+				compressionResult.Save(CompressedFileName);
 			}
-			catch(Exception e)
-			{
-				Console.WriteLine(e);
-			}
+
+			stopwatch.Stop();
+			Console.WriteLine("Compression: " + stopwatch.Elapsed);
+
+			stopwatch.Restart();
+			var compressedImage = CompressedImage.Load(CompressedFileName);
+			var uncompressedImage = decompressor.Decompress(compressedImage);
+			var resultBitmap = (Bitmap)uncompressedImage;
+			stopwatch.Stop();
+
+			resultBitmap.Save(UncompressedFileName, ImageFormat.Bmp);
+			Console.WriteLine("Decompression: " + stopwatch.Elapsed);
+			Console.WriteLine($"Peak commit size: {MemoryMeter.PeakPrivateBytes() / (1024.0 * 1024):F2} MB");
+			Console.WriteLine($"Peak working set: {MemoryMeter.PeakWorkingSet() / (1024.0 * 1024):F2} MB");
 		}
 	}
 }
