@@ -2,49 +2,34 @@
 
 public class PixelFormat
 {
-    private string Format;
+    private string format;
 
     private PixelFormat(string format)
     {
-        Format = format;
+        this.format = format;
     }
 
-    public static PixelFormat RGB => new PixelFormat(nameof(RGB));
-    public static PixelFormat YCbCr => new PixelFormat(nameof(YCbCr));
+    public static PixelFormat Rgb => new(nameof(Rgb));
+    public static PixelFormat YCbCr => new(nameof(YCbCr));
 
-    protected bool Equals(PixelFormat other)
-    {
-        return string.Equals(Format, other.Format);
-    }
+    protected bool Equals(PixelFormat other) => string.Equals(format, other.format);
 
     public override bool Equals(object obj)
     {
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((PixelFormat) obj);
     }
 
-    public override int GetHashCode()
-    {
-        return (Format != null ? Format.GetHashCode() : 0);
-    }
+    public override int GetHashCode() => format != null ? format.GetHashCode() : 0;
 
-    public static bool operator==(PixelFormat a, PixelFormat b)
-    {
-        return a.Equals(b);
-    }
-		
-    public static bool operator!=(PixelFormat a, PixelFormat b)
-    {
-        return !a.Equals(b);
-    }
+    public static bool operator==(PixelFormat a, PixelFormat b) => a.Equals(b);
 
-    public override string ToString()
-    {
-        return Format;
-    }
-        
+    public static bool operator!=(PixelFormat a, PixelFormat b) => !a.Equals(b);
+
+    public override string ToString() => format;
+
     ~PixelFormat()
     {
-        Format = null;
+        format = null;
     }
 }

@@ -16,7 +16,7 @@ public class Matrix
         Pixels = new Pixel[height,width];
         for(var i = 0; i< height; ++i)
         for(var j = 0; j< width; ++j)
-            Pixels[i, j] = new Pixel(0, 0, 0, PixelFormat.RGB);
+            Pixels[i, j] = new Pixel(0, 0, 0, PixelFormat.Rgb);
     }
 
     public static explicit operator Matrix(Bitmap bmp)
@@ -30,7 +30,7 @@ public class Matrix
             for(var i = 0; i < width; i++)
             {
                 var pixel = bmp.GetPixel(i, j);
-                matrix.Pixels[j, i] = new Pixel(pixel.R, pixel.G, pixel.B, PixelFormat.RGB);
+                matrix.Pixels[j, i] = new Pixel(pixel.R, pixel.G, pixel.B, PixelFormat.Rgb);
             }
         }
 
@@ -53,13 +53,14 @@ public class Matrix
         return bmp;
     }
 
-    public static int ToByte(double d)
+    private static int ToByte(double d)
     {
         var val = (int) d;
-        if (val > byte.MaxValue)
-            return byte.MaxValue;
-        if (val < byte.MinValue)
-            return byte.MinValue;
-        return val;
+        return val switch
+        {
+            > byte.MaxValue => byte.MaxValue,
+            < byte.MinValue => byte.MinValue,
+            _ => val
+        };
     }
 }

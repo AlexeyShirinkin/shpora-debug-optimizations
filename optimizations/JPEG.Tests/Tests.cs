@@ -30,20 +30,18 @@ internal class Tests
     public void IsCorrectCompress()
     {
         var compressor = new Compressor();
-            
-        using (var fileStream = File.OpenRead(FileName))
-        using (var bmp = (Bitmap) Image.FromStream(fileStream, false, false))
-        {
-            var imageMatrix = (Matrix) bmp;
 
-            var compressionResult = compressor.Compress(imageMatrix, CompressionQuality);
-            compressionResult.Save(ActualCompressedPath);
-                
-            var expectedImage = File.ReadAllBytes(ExpectedCompressedPath);
-            var actualImage = File.ReadAllBytes(ActualCompressedPath);
+        using var fileStream = File.OpenRead(FileName);
+        using var bitmap = (Bitmap) Image.FromStream(fileStream, false, false);
+        var imageMatrix = (Matrix) bitmap;
 
-            actualImage.Should().BeEquivalentTo(expectedImage);
-        }
+        var compressionResult = compressor.Compress(imageMatrix, CompressionQuality);
+        compressionResult.Save(ActualCompressedPath);
+
+        var expectedImage = File.ReadAllBytes(ExpectedCompressedPath);
+        var actualImage = File.ReadAllBytes(ActualCompressedPath);
+
+        actualImage.Should().BeEquivalentTo(expectedImage);
     }
         
     [Test]

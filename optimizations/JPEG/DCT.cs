@@ -8,7 +8,7 @@ public class DCT
 	{
 		var height = input.GetLength(0);
 		var width = input.GetLength(1);
-		var coeffs = new double[width, height];
+		var coefficients = new double[width, height];
 
 		MathEx.LoopByTwoVariables(
 			0, width,
@@ -21,10 +21,10 @@ public class DCT
 						0, height,
 						(x, y) => BasisFunction(input[x, y], u, v, x, y, height, width));
 
-				coeffs[u, v] = sum * Beta(height, width) * Alpha(u) * Alpha(v);
+				coefficients[u, v] = sum * Beta(height, width) * Alpha(u) * Alpha(v);
 			});
 			
-		return coeffs;
+		return coefficients;
 	}
 
 	public static void IDCT2D(double[,] coeffs, double[,] output)

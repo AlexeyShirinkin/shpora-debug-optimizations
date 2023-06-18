@@ -4,18 +4,14 @@ using System.Linq;
 
 namespace JPEG;
 
-static class IEnumerableExtensions
+internal static class EnumerableExtensions
 {
-	public static T MinOrDefault<T>(this IEnumerable<T> enumerable, Func<T, int> selector)
-	{
-		return enumerable.OrderBy(selector).FirstOrDefault();
-	}
+	public static T MinOrDefault<T>(this IEnumerable<T> enumerable, Func<T, int> selector) =>
+		enumerable.OrderBy(selector).FirstOrDefault();
 
-	public static IEnumerable<T> Without<T>(this IEnumerable<T> enumerable, params T[] elements)
-	{
-		return enumerable.Where(x => !elements.Contains(x));
-	}
-		
+	public static IEnumerable<T> Without<T>(this IEnumerable<T> enumerable, params T[] elements) =>
+		enumerable.Where(x => !elements.Contains(x));
+
 	public static IEnumerable<T> ToEnumerable<T>(this T element)
 	{
 		yield return element;
